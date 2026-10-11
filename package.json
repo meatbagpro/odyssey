@@ -1,0 +1,15 @@
+{
+  "name": "odyssey-commonplace-book",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun scripts/build.ts",
+    "test": "bun test",
+    "dev": "bun run build && bun scripts/serve.ts"
+  },
+  "dependencies": {
+    "marked": "^16.4.0",
+    "sanitize-html": "^2.17.0",
+    "yaml": "^2.8.1"
+  }
+}
