@@ -6,10 +6,17 @@ test('every existing article keeps its published Jekyll URL', async () => {
   const sitemap = await readFile('tests/legacy-sitemap.xml', 'utf8');
   const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => decodeURIComponent(new URL(match[1], 'https://yulu.zgc.io').pathname));
   const files = await readdir('_posts');
+  const originals = await Bun.file('tests/original-articles.json').json();
   expect(files.length).toBeGreaterThanOrEqual(29);
+  for (const filename of Object.keys(originals)) {
+    expect(files).toContain(filename);
+  }
   for (const file of files) {
     const post = parsePost(file, await readFile(`_posts/${file}`, 'utf8'));
-    expect(urls).toContain(decodeURIComponent(post.url));
+    // 历史站点地图仅涵盖原有文章；新摘抄的链接由构建测试验证。
+    if (Object.hasOwn(originals, file)) {
+      expect(urls).toContain(decodeURIComponent(post.url));
+    }
     expect(post.title.length).toBeGreaterThan(0);
     expect(post.text.length).toBeGreaterThan(0);
   }
